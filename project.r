@@ -334,24 +334,26 @@ day_labeller <- function(var, value){
 ##
 # best plot size seems to be 600w x 720h
 ip <- qplot(offset, ith_rsvp/yes_rsvp_count, data=d,
-            geom="point", alpha = I(1/5), 
+            geom="point", alpha = I(1/8), 
             main="Rates of Responses by Event \n and by Day of Meetups",
             xlab = "Days from Event Creation until Meetup", 
             ylab = "% of \n RSVP \n Limit") +
   geom_smooth(method = "lm", se = F) + 
-  theme(axis.title.y=element_text(angle=0)) +
-  theme(strip.text.y=element_text(angle=0, hjust=0, vjust=0.9)) +
+  theme(axis.title.y=element_text(angle=0), axis.text.y=element_text(size=5.5)) +
+  theme(axis.text.x=element_text(size=5.5)) +
+  theme(strip.text.y=element_text(size=7, angle=0, hjust=0, vjust=0.9)) +
   facet_grid(event_id ~ meetday, labeller=day_labeller)  
 ip
 
 ap <- qplot(abs(offset), ith_rsvp/yes_rsvp_count, data=d,
-             geom="point", alpha = I(1/5), 
+             geom="point", alpha = I(1/8), 
              main="Rates of Responses by Event and \n by Day of Meetups: Absolute X Values",
              xlab = "Days from Event Creation until Meetup", 
              ylab = "% of \n RSVP \n Limit") +
   geom_smooth(method = "lm", se = F) + 
-  theme(axis.title.y=element_text(angle=0)) +
-  theme(strip.text.y=element_text(angle=0, hjust=0, vjust=0.9)) +
+  theme(axis.title.y=element_text(angle=0), axis.text.y=element_text(size=5.5)) +
+  theme(axis.text.x=element_text(size=5.5)) +
+  theme(strip.text.y=element_text(size=7, angle=0, hjust=0, vjust=0.9)) +
   facet_grid(event_id ~ meetday, labeller=day_labeller)  
 ap
 
@@ -363,8 +365,9 @@ lxp <- qplot(abs(offset), ith_rsvp/yes_rsvp_count, data=d,
             ylab = "% of \n RSVP \n Limit") +
   geom_smooth(method = "lm", se = F) + 
   scale_x_log10() +
-  theme(axis.title.y=element_text(angle=0)) +
-  theme(strip.text.y=element_text(angle=0, hjust=0, vjust=0.9)) +
+  theme(axis.title.y=element_text(angle=0), axis.text.y=element_text(size=5.5)) +
+  theme(axis.text.x=element_text(size=5.5)) +
+  theme(strip.text.y=element_text(size=7, angle=0, hjust=0, vjust=0.9)) +
   facet_grid(event_id ~ meetday, labeller=day_labeller)  
 lxp
 
@@ -376,8 +379,9 @@ lxyp <- qplot(abs(offset), ith_rsvp/yes_rsvp_count, data=d,
   geom_smooth(method = "lm", se = F) + 
   scale_y_log10() +
   scale_x_log10() +
-  theme(axis.title.y=element_text(angle=0)) +
-  theme(strip.text.y=element_text(angle=0, hjust=0, vjust=0.9)) +
+  theme(axis.title.y=element_text(angle=0), axis.text.y=element_text(size=5.5)) +
+  theme(axis.text.x=element_text(size=5.5)) +
+  theme(strip.text.y=element_text(size=7, angle=0, hjust=0, vjust=0.9)) +
   facet_grid(event_id ~ meetday, labeller=day_labeller)  
 lxyp
 
@@ -388,8 +392,9 @@ lyp <- qplot(abs(offset), ith_rsvp/yes_rsvp_count, data=d,
               ylab = "% of \n RSVP \n Limit") +
   geom_smooth(method = "lm", se = F) + 
   scale_y_log10() +
-  theme(axis.title.y=element_text(angle=0)) +
-  theme(strip.text.y=element_text(angle=0, hjust=0, vjust=0.9)) +
+  theme(axis.title.y=element_text(angle=0), axis.text.y=element_text(size=5.5)) +
+  theme(axis.text.x=element_text(size=5.5)) +
+  theme(strip.text.y=element_text(size=7, angle=0, hjust=0, vjust=0.9)) +
   facet_grid(event_id ~ meetday, labeller=day_labeller)  
 lyp
 
