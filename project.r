@@ -1,5 +1,5 @@
-## Understanding who is atteding DS DC meetups
-# I'm trying to understand who is attending the DataScience DC meetups with
+## Understanding what goes on with RSVPs vs attendance at DS DC meetups
+# I'm trying to understand RSVPs at the DataScience DC meetups with
 # intent to vizualize it for accurate understanding about the popularity
 # of meetups. I have a few initial questions:
 # 
@@ -25,7 +25,7 @@ d <- read.csv("~/Documents/School/CSI773_Carr/dsdcProject/RegistrationData.csv",
                            member_id="character", 
                            event_id="character"))
 
-# Get more data on the events to know th econtext; import the event data
+# Get more data on the events to know the context; import the event data
 e <- read.csv("~/Documents/School/CSI773_Carr/dsdcProject/DSDCevents.csv")
 ebig <- e
 eplus <- subset(ebig, select=-description)
@@ -49,7 +49,6 @@ eminus <- eplus[tossers,]
 # Fair enough. The Bayes seminar was all day (had a cost, was not in DC, ...); the 
 # PAW-Gov Data Drinks was just a social event after a conference that most of us
 # didn't attend; and, thw NumPy was acually hosted by the DC Python group at GWU 
-# and wasn't announced on the DSDC list until after it was full (humph!)
 # Let's look more closely at this event data:
 sapply(e, mode)
 sapply(e, class)
@@ -93,8 +92,9 @@ plot(E$venue_id, E$fill) # Nope. That's wrong, ugly, and useless; needs factors
 plot(as.factor(E$venue_name), E$fill) # Much better. Box plots are interesting
 # Typical rough work; now it's time to apply what I've learned
 
-# This is typically what we get at Meetup intro briefings.
-# ...but does not give the context of rsvp limits.
+# Meetups usually present membership growth in a histogram, so let's build some
+# kind of histogram to represent what is typical for Meetup intro briefings.
+# ...but my histogram does not give the context of rsvp limits.
 d$idfac <- as.factor(d$event_id)
 qplot(idfac, data=d, geom="bar",
       main="Growth of Meetup Popularity",
@@ -106,27 +106,27 @@ qplot(idfac, data=d, geom="bar",
 
 
 b <- qplot(as.factor(E$venue_name), 
-            E$fill, main="Distribution of Data Scientists' Attendence Plans: Percentage of Venue Capacity", 
+            E$fill, main="Distribution of Data Scientists' \n Attendence Plans: Percentage of Venue Capacity", 
             xlab = "DataScience DC Venue Hosts", ylab = "%") 
 b + theme(axis.title.y=element_text(angle=0))
 b + geom_boxplot() + theme(axis.title.y=element_text(angle=0))
 # Figure 1: Final
 
-# Ooh! More likely to rsvp at some venues
+# More likely to rsvp at some venues? No. All the veunues are good; gotta be 
+# something else...
 a <- qplot(as.factor(E$venue_name), 
-            E$fill_heads, main="Distribution of Data Scientists' Actual Attendance: Percentage of RSVPs",
+            E$fill_heads, main="Distribution of Data Scientists' \n Actual Attendance: Percentage of RSVPs",
             xlab = "DataScience DC Venue Hosts", ylab = "%") # Much better. Box plots are interesting
 a + theme(axis.title.y=element_text(angle=0))
 a + geom_boxplot() + theme(axis.title.y=element_text(angle=0))
 # I'm tempted to assume from the data that the double-occupancy meetup at 
-# HelloWallet is bad data but I was there and it was packed to overflowing; 
-# several people left early for lack of space to even stand. Who knew regression
-# was such a draw?!
+# HelloWallet is bad data but I think I was there and it was packed to overflowing. 
+# Who knew regression was such a draw?!
 
 # Just for fun, I'm keeping these but the plots work better (especially because of
 # the titles) when they are horizontal. Notice the difference in how extreme the 
 # one "twice the attendance as rsvp'd" event at HelloWallet seems in each flip
-b + coord_flip() + geom_boxplot() #Really doesn't add anything, IMO
+b + coord_flip() + geom_boxplot() #These boxplots really don't add anything, IMO
 a + coord_flip()
 
 # How does early notice (create time - event time) impact rsvp and attendance
@@ -164,6 +164,8 @@ qplot(data=E, mtime, ctime, geom="point",
       ylab = "Announcement \nDates") + 
   geom_smooth(method="lm") + 
   theme(axis.title.y=element_text(angle=0))
+# Wow. The Meetups are pretty regular. ...almost as if they were planned...
+
 # by RSVPs
 qplot(data=E, 
   as.factor(notime), fill ) + coord_flip() + geom_smooth(aes(group=1))
@@ -176,17 +178,16 @@ qplot(data=E, as.factor(notime), fill_heads) +
 
 # Now let's take a closer look at the data that the DataSciences DC leaderhsip
 # gave us to work with. ...starting with those troublesome dates!
-d$created #looks like a character string, not the time-date data above.
+head(d$created) #looks like a character string, not the time-date data above.
 
-checktime<-as.Date(d$created, format="%m/%d/%Y %H:%M")
-checktime # better?
+checktime <- as.Date(d$created, format="%m/%d/%Y %H:%M")
+head(checktime) # better?
 # Nope!
 checktime <- as.POSIXct(d$created, format="%m/%d/%Y")
-checktime # better?
+head(checktime) # better?
 # Nope!
 checktime <- strptime(d$time, format ="%m/%d/%Y %H:%M")
-checktime
-# Eureka!
+head(checktime) # Eureka!
 
 # Now that we know what works, let's create some columns in 'd' to calculate
 # the amount of time it takes people to respond to meetup announcements.
@@ -196,7 +197,7 @@ checktime
 # saying that they'd attend (wouldn't it be nice to compare this with how quickly
 # people responded saying that they would NOT attend? Alas, I don't have that data.)
 d$rsvp_time <- as.POSIXct(strptime(d$created, format ="%m/%d/%Y %H:%M"))
-d$rsvp_time
+head(d$rsvp_time)
 
 d$rsvp_time[1] - E$ctime[1]
 d$r_time <- NULL
@@ -240,6 +241,7 @@ ggplot(data=ed, aes(x=event_id,
 # attend vs. willingness to acually show up.
 # Intent is to combine these calculations of the registration data (d) with the
 # event data(E) to make 'event registration data' (ed).
+
 evresps <- data.frame(d$event_id, d$r_time)
 head(evresps)
 rsvpstats <- ddply(evresps, c('d.event_id', 'd.r_time'), 
@@ -261,6 +263,10 @@ esums
 ed <- merge(esums, E, by.x = "event_id", by.y = "id", all = TRUE)
 head(ed)
 
+# hmmm. Need to fix these names...
+ed$wname[2] <- "Presentation Discussion: What the \n heck is Data Science, anyway?"
+ed$wname[6] <- "Presentation Discussion: Maximal \n Information Coefficient"
+
 
 # What if I want to plot the rate of replies to compare the slopes? I need to track
 # each rsvp by count. 
@@ -278,7 +284,7 @@ for (i in 2:2434) {
 
 d$meetday = as.numeric(format(as.POSIXlt(d$time, format="%m/%d/%Y %H:%M"),"%u"))
 
-# Das es Fantastiche! I can see that some days are more popular than others, that
+# Yippee! I can see that some days are more popular than others, that
 # some events have a steep slope and that some events start off with a rapid rsvp
 # rate while others do not. 
 # I wish I could order the facets by the date tho...
@@ -289,7 +295,7 @@ d$meetday = as.numeric(format(as.POSIXlt(d$time, format="%m/%d/%Y %H:%M"),"%u"))
 # for too little payoff.
 
 as.POSIXct(ctime, origin = "1970-01-01")
-E$ctime = structure(ctime/1000,class=c('POSIXt','POSIXct'))
+E$ctime <- structure(ctime/1000,class=c('POSIXt','POSIXct'))
 
 llply(ed$name, function(x) paste(strwrap(x, width=40), collapse=" \n "))
 
@@ -302,7 +308,6 @@ wrapit <- function(text) {
 
 ed$wname <- llply(ed$name, wrapit)
 ed$wname <- unlist(ed$wname)
-
 
 day_labeller <- function(var, value){
   value <- as.character(value)
@@ -418,7 +423,6 @@ str(ledc)
 #   coord_flip()
 # cplots
 ## Not so fast! That's not quite what I want. 
-
 
 ehcp <- ggplot(ledc, aes(x=eid, y=count, colour=type, group=type)) + 
   geom_point() + 
